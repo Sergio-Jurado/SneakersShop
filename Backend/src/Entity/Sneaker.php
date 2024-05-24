@@ -2,9 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SneakerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: SneakerRepository::class)]
 class Sneaker
 {
@@ -24,6 +28,14 @@ class Sneaker
 
     #[ORM\Column]
     private ?int $price = null;
+
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'Sneaker')]
+    private Collection $photos;
+
+    public function __construct()
+    {
+        $this->photos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +86,36 @@ class Sneaker
     public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Photo>
+     */
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
+
+    public function addPhoto(Photo $photo): static
+    {
+        if (!$this->photos->contains($photo)) {
+            $this->photos[]= $photo;
+            $photo->setSneaker($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(Photo $photo): static
+    {
+        if ($this->photos->removeElement($photo)) {
+            // set the owning side to null (unless already changed)
+            if ($photo->getSneaker() === $this) {
+                $photo->setSneaker(null);
+            }
+        }
 
         return $this;
     }
