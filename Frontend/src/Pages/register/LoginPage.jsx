@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -11,36 +11,26 @@ const LoginPage = () => {
         e.preventDefault();
         setError("");
 
-        // Almacenar los valores actuales de username y password en variables locales
-        const currentUsername = username;
-        const currentPassword = password;
-
         try {
-            const response = await fetch("http://127.0.0.1:8000/login", {
+            const response = await fetch("http://localhost:3000/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                credentials: 'include',
-                body: JSON.stringify({ username: currentUsername, password: currentPassword }) // Usar las variables locales
+                body: JSON.stringify({ username, password })
             });
 
             if (!response.ok) {
                 console.log(response);
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Nombre de usuario o contraseña incorrectos.");
+                throw new Error(errorData.error);
             }
-            console.log(currentUsername, currentPassword, response); // Usar las variables locales
+
             const data = await response.json();
             console.log(data);
-            localStorage.setItem("token", data.username);
-
-            // Redirige a la página principal o a la que desees
+            localStorage.setItem("token", data.token);
             navigate("/");
         } catch (error) {
-
-            console.log(currentUsername, currentPassword);
-            console.log(error);
             setError(error.message);
         }
     };
@@ -81,7 +71,7 @@ const LoginPage = () => {
                     </button>
                 </form>
                 <p className="mt-4 text-center">
-                    ¿No tienes una cuenta? <a href="/register" className="text-blue-600">Regístrate</a>
+                    ¿No tienes una cuenta? <a href="/register" className="text-green-600">Regístrate</a>
                 </p>
             </div>
         </div>

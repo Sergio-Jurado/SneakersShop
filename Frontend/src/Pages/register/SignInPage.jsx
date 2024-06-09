@@ -23,17 +23,16 @@ const SignInPage = () => {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/register", {
+            const response = await fetch("http://localhost:3000/api/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     username: userName,
-                    roles: [""],
                     password: password,
                     name: name,
-                    lastName: lastName
+                    last_name: lastName
                 })
             });
 
@@ -41,9 +40,9 @@ const SignInPage = () => {
                 console.log(response);
                 throw new Error("Error en el registro. Inténtalo de nuevo.");
             }
-            navigate("/login");
-            setSuccess("Registro exitoso. Por favor, inicia sesión.");
 
+            setSuccess("Registro exitoso. Por favor, inicia sesión.");
+            navigate("/login");
         } catch (error) {
             console.log(error.message);
             setError(error.message);
