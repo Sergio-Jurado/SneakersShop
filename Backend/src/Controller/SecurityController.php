@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
 {
 
-    #[Route('/check-auth', name: 'check_auth', methods: ['GET'])]
+    #[Route('/check_auth', name: 'check-auth', methods: ['GET'])]
     public function checkAuth(): JsonResponse
     {
         // Aquí debes implementar la lógica para verificar la autenticación del usuario
@@ -26,20 +30,24 @@ class SecurityController extends AbstractController
         }
     }
 
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route(path: '/login', name: 'app_login', methods: ['POST'])]
+    public function login(Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        $username = $request->request->get('username') ?? '';
+        $password = $request->request->get('password') ?? '';
+        $user = $userRepository->findOneBy(['username' => $username]);
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        if (!$username || !$password) {
+            return new JsonResponse(['message' => 'Faltan credenciales'], JsonResponse::HTTP_BAD_REQUEST);
+        }
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        if (!$user || !$passwordEncoder->isPasswordValid($user, $password)) {
+            return new JsonResponse(['message' => 'Credenciales inválidas'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        return new JsonResponse(['message' => 'Inicio de sesión exitoso']);
     }
+
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void

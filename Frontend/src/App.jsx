@@ -13,7 +13,7 @@ const App = () => {
       try {
         // Aquí debes hacer la petición al backend para verificar la autenticación
         // Por ejemplo, una solicitud fetch a tu endpoint de autenticación
-        const response = await fetch("http://127.0.0.1:8000/check-auth", {
+        const response = await fetch("http://127.0.0.1:8000/check_auth", {
           method: "GET",
           headers: {
             // Aquí puedes enviar el token de autenticación si lo necesitas

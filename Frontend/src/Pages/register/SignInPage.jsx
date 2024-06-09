@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "../../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const SignInPage = () => {
     const [userName, setUserName] = useState("");
@@ -9,6 +10,7 @@ const SignInPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,8 +41,9 @@ const SignInPage = () => {
                 console.log(response);
                 throw new Error("Error en el registro. Inténtalo de nuevo.");
             }
-
+            navigate("/login");
             setSuccess("Registro exitoso. Por favor, inicia sesión.");
+
         } catch (error) {
             console.log(error.message);
             setError(error.message);

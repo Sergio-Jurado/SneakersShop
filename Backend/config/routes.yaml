@@ -7,3 +7,13 @@ controllers:
 zapatilla_new:
     path: /sneaker/new
     controller: App\Controller\ZapatillaController::new
+
+login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+    methods: ['POST']
+
+logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+

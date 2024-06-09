@@ -16,9 +16,15 @@ return [
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/' => [[['_route' => 'app_main', '_controller' => 'App\\Controller\\MainController::index'], null, null, null, false, false, null]],
         '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
-        '/check-auth' => [[['_route' => 'check_auth', '_controller' => 'App\\Controller\\SecurityController::checkAuth'], null, ['GET' => 0], null, false, false, null]],
-        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
-        '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
+        '/check_auth' => [[['_route' => 'check-auth', '_controller' => 'App\\Controller\\SecurityController::checkAuth'], null, ['GET' => 0], null, false, false, null]],
+        '/login' => [
+            [['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, ['POST' => 0], null, false, false, null],
+            [['_route' => 'login', '_controller' => 'App\\Controller\\SecurityController::login'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/logout' => [
+            [['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null],
+            [['_route' => 'logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null],
+        ],
         '/sneaker' => [[['_route' => 'app_sneaker_index', '_controller' => 'App\\Controller\\SneakerController::index'], null, ['GET' => 0], null, true, false, null]],
         '/sneaker/new' => [[['_route' => 'app_sneaker_new', '_controller' => 'App\\Controller\\SneakerController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
     ],

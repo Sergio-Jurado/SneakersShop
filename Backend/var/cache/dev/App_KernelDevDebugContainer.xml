@@ -26,6 +26,7 @@
       <parameter key="MonologBundle">Symfony\Bundle\MonologBundle\MonologBundle</parameter>
       <parameter key="MakerBundle">Symfony\Bundle\MakerBundle\MakerBundle</parameter>
       <parameter key="ApiPlatformBundle">ApiPlatform\Symfony\Bundle\ApiPlatformBundle</parameter>
+      <parameter key="NelmioCorsBundle">Nelmio\CorsBundle\NelmioCorsBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -79,6 +80,10 @@
       <parameter key="ApiPlatformBundle" type="collection">
         <parameter key="path">C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\api-platform\core\src\Symfony\Bundle</parameter>
         <parameter key="namespace">ApiPlatform\Symfony\Bundle</parameter>
+      </parameter>
+      <parameter key="NelmioCorsBundle" type="collection">
+        <parameter key="path">C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\nelmio\cors-bundle</parameter>
+        <parameter key="namespace">Nelmio\CorsBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
@@ -401,6 +406,37 @@
     <parameter key="api_platform.validator.serialize_payload_fields" type="collection"/>
     <parameter key="api_platform.validator.query_parameter_validation">true</parameter>
     <parameter key="api_platform.elasticsearch.enabled">false</parameter>
+    <parameter key="nelmio_cors.map" type="collection">
+      <parameter key="^/" type="collection">
+        <parameter key="skip_same_as_origin">true</parameter>
+      </parameter>
+    </parameter>
+    <parameter key="nelmio_cors.defaults" type="collection">
+      <parameter key="allow_origin" type="collection">
+        <parameter>http://localhost:5173</parameter>
+      </parameter>
+      <parameter key="allow_credentials">true</parameter>
+      <parameter key="allow_headers" type="collection">
+        <parameter>content-type</parameter>
+        <parameter>authorization</parameter>
+      </parameter>
+      <parameter key="expose_headers" type="collection"/>
+      <parameter key="allow_methods" type="collection">
+        <parameter>GET</parameter>
+        <parameter>OPTIONS</parameter>
+        <parameter>POST</parameter>
+        <parameter>PUT</parameter>
+        <parameter>DELETE</parameter>
+      </parameter>
+      <parameter key="max_age">3600</parameter>
+      <parameter key="hosts" type="collection"/>
+      <parameter key="origin_regex">false</parameter>
+      <parameter key="forced_allow_origin_value">null</parameter>
+      <parameter key="skip_same_as_origin">true</parameter>
+    </parameter>
+    <parameter key="nelmio_cors.cors_listener.class">Nelmio\CorsBundle\EventListener\CorsListener</parameter>
+    <parameter key="nelmio_cors.options_resolver.class">Nelmio\CorsBundle\Options\Resolver</parameter>
+    <parameter key="nelmio_cors.options_provider.config.class">Nelmio\CorsBundle\Options\ConfigProvider</parameter>
     <parameter key="data_collector.templates" type="collection">
       <parameter key="data_collector.request" type="collection">
         <parameter>request</parameter>
@@ -597,7 +633,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.PnzDjEC"/>
+      <argument type="service" id=".service_locator.u.Ee9YU"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -2556,6 +2592,7 @@
           <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\symfony\monolog-bundle/translations</argument>
           <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\symfony\maker-bundle\src/translations</argument>
           <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\api-platform\core\src\Symfony\Bundle/translations</argument>
+          <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\nelmio\cors-bundle/translations</argument>
         </argument>
         <argument key="cache_vary" type="collection">
           <argument key="scanned_directories" type="collection">
@@ -2576,6 +2613,7 @@
             <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\symfony\monolog-bundle/translations</argument>
             <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\symfony\maker-bundle\src/translations</argument>
             <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\api-platform\core\src\Symfony\Bundle/translations</argument>
+            <argument>C:\Users\Usuario\Desktop\TFG-WEB\TFG\SneakersShop\Backend\vendor\nelmio\cors-bundle/translations</argument>
           </argument>
         </argument>
       </argument>
@@ -3018,6 +3056,30 @@
           <argument>onKernelRequest</argument>
         </argument>
         <argument>16</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.request</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelRequest</argument>
+        </argument>
+        <argument>250</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelResponse</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cacheable_response_vary_listener"/>
+          <argument>onResponse</argument>
+        </argument>
+        <argument>-10</argument>
       </call>
       <call method="addListener">
         <argument>kernel.controller_arguments</argument>
@@ -3561,7 +3623,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.PnzDjEC"/>
+      <argument type="service" id=".service_locator.u.Ee9YU"/>
     </service>
     <service id="debug.log_processor" class="Symfony\Bridge\Monolog\Processor\DebugProcessor">
       <tag name="kernel.reset" method="reset"/>
@@ -8324,6 +8386,27 @@
       <argument type="service" id="api_platform.metadata.resource.metadata_collection_factory.cached"/>
       <argument type="service" id="api_platform.serializer.context_builder.filter"/>
     </service>
+    <service id="nelmio_cors.cors_listener" class="Nelmio\CorsBundle\EventListener\CorsListener">
+      <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="250"/>
+      <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" priority="0"/>
+      <tag name="container.hot_path"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="nelmio_cors.options_resolver"/>
+    </service>
+    <service id="nelmio_cors.options_resolver" class="Nelmio\CorsBundle\Options\Resolver">
+      <argument type="collection">
+        <argument type="service" id="nelmio_cors.options_provider.config"/>
+      </argument>
+    </service>
+    <service id="nelmio_cors.options_provider.config" class="Nelmio\CorsBundle\Options\ConfigProvider">
+      <tag name="nelmio_cors.options_provider" priority="-1"/>
+      <argument>%nelmio_cors.map%</argument>
+      <argument>%nelmio_cors.defaults%</argument>
+    </service>
+    <service id="nelmio_cors.cacheable_response_vary_listener" class="Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener">
+      <tag name="kernel.event_listener" event="kernel.response" method="onResponse" priority="-10"/>
+      <tag name="container.hot_path"/>
+    </service>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\MainController" class="App\Controller\MainController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\MainController" class="App\Controller\MainController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\MainController" class="App\Controller\MainController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -8769,10 +8852,11 @@
         <argument key="userPasswordHasher" type="service_closure" id="security.user_password_hasher"/>
       </argument>
     </service>
-    <service id=".service_locator.rSTd.nA" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.OKEu7V2" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
-        <argument key="authenticationUtils" type="service_closure" id="security.authentication_utils"/>
+        <argument key="passwordEncoder" type="service_closure" id="security.user_password_hasher"/>
+        <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
     <service id=".service_locator.wHTNU6n" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -8800,11 +8884,11 @@
         <argument key="sneaker" type="service_closure" id=".errored..service_locator.DSGbcvR.App\Entity\Sneaker"/>
       </argument>
     </service>
-    <service id=".service_locator.PnzDjEC" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.u.Ee9YU" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\RegistrationController::register" type="service_closure" id=".service_locator.HT4rftb"/>
-        <argument key="App\Controller\SecurityController::login" type="service_closure" id=".service_locator.rSTd.nA"/>
+        <argument key="App\Controller\SecurityController::login" type="service_closure" id=".service_locator.OKEu7V2"/>
         <argument key="App\Controller\SneakerController::delete" type="service_closure" id=".service_locator.DSGbcvR"/>
         <argument key="App\Controller\SneakerController::edit" type="service_closure" id=".service_locator.DSGbcvR"/>
         <argument key="App\Controller\SneakerController::index" type="service_closure" id=".service_locator.wHTNU6n"/>
@@ -8815,7 +8899,7 @@
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.y4_Zrx."/>
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.y4_Zrx."/>
         <argument key="App\Controller\RegistrationController:register" type="service_closure" id=".service_locator.HT4rftb"/>
-        <argument key="App\Controller\SecurityController:login" type="service_closure" id=".service_locator.rSTd.nA"/>
+        <argument key="App\Controller\SecurityController:login" type="service_closure" id=".service_locator.OKEu7V2"/>
         <argument key="App\Controller\SneakerController:delete" type="service_closure" id=".service_locator.DSGbcvR"/>
         <argument key="App\Controller\SneakerController:edit" type="service_closure" id=".service_locator.DSGbcvR"/>
         <argument key="App\Controller\SneakerController:index" type="service_closure" id=".service_locator.wHTNU6n"/>
@@ -11393,7 +11477,7 @@
     <service id="ApiPlatform\Symfony\Security\ResourceAccessCheckerInterface" alias="api_platform.security.resource_access_checker"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.bJ.4HC5" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.PnzDjEC"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.u.Ee9YU"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.KLVvNIq"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="Psr\Log\LoggerInterface $requestLogger" alias="monolog.logger.request"/>
@@ -11496,7 +11580,7 @@
     <service id=".service_locator.Xbsa8iG" alias="api_platform.filter_locator"/>
     <service id=".service_locator.gFlme_s" alias=".service_locator.y4_Zrx."/>
     <service id=".service_locator.NJIEzt2" alias=".service_locator.HT4rftb"/>
-    <service id=".service_locator.7NIAq8D" alias=".service_locator.rSTd.nA"/>
+    <service id=".service_locator.BLuIgko" alias=".service_locator.OKEu7V2"/>
     <service id=".service_locator.HSMhCqM" alias=".service_locator.wHTNU6n"/>
     <service id=".service_locator.9e2t_lq" alias=".service_locator.CsMkqUa"/>
     <service id=".service_locator.Vee0vlf" alias=".service_locator.38TGDP2"/>
