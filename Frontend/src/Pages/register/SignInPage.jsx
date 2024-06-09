@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Footer from "../../components/Footer";
 import { useNavigate } from "react-router-dom";
 
 const SignInPage = () => {
@@ -119,7 +118,6 @@ const SignInPage = () => {
                     </p>
                 </div>
             </div>
-            <Footer />
         </>
     );
 };

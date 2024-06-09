@@ -18,7 +18,7 @@ const getRouter = () => {
 
     router.get('/users', (req, res) => {
         const connection = mysql.createConnection(dbConfig);
-        connection.query('SELECT * FROM usuarios', (error, results, fields) => {
+        connection.query('SELECT * FROM user', (error, results, fields) => {
             connection.end(); // Cerrar la conexión después de obtener los resultados
             if (error) {
                 console.error('Error al obtener todos los usuarios:', error);
@@ -65,7 +65,6 @@ const getRouter = () => {
     // Obtiene la información del usuario que está registrado
     router.get('/user/:id', async (req, res) => {
         const userId = req.params.id; // Obtiene el ID del usuario de la URL
-        console.log(userId);
         try {
             const connection = mysql.createConnection(dbConfig); // Crea una nueva conexión a la base de datos
             connection.connect(); // Conecta a la base de datos
@@ -126,7 +125,6 @@ const getRouter = () => {
                     // Las contraseñas coinciden, usuario autenticado con éxito
                     const id = user.id;
                     res.status(200).json({ token: id });
-                    console.log("Sirve");
                 } else {
                     // Las contraseñas no coinciden
                     res.status(401).json({ error: 'Nombre de usuario o contraseña incorrectos' });
@@ -140,8 +138,102 @@ const getRouter = () => {
 
     // ENDOPIST DE SNEAKERS
 
+    router.get('/sneakers', async (req, res) => {
+        const connection = mysql.createConnection(dbConfig);
+        connection.query('SELECT * FROM sneaker', (error, results, fields) => {
+            connection.end(); // Cerrar la conexión después de obtener los resultados
+            if (error) {
+                console.error('Error al obtener todos las zapatillas:', error);
+                res.status(500).json({ error: 'Error al obtener todas las zapatillas' });
+            } else {
+                res.status(200).json(results);
+            }
+        });
+    })
+
+    router.post('/sneaker/new', async (req, res) => {
+        const { brand, model, type, price, size } = req.body;
+
+        // Verifica si se proporcionaron todos los campos obligatorios
+        if (!brand || !model || !type || !price || !size) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios' });
+        }
+
+        try {
+            const sneakerId = uuidv4(); // Genera un nuevo ID para la zapatilla
+            const connection = mysql.createConnection(dbConfig); // Crea una conexión a la base de datos
+            const sql = 'INSERT INTO sneaker (id, brand, model, type, price, size) VALUES (?, ?, ?, ?, ?, ?)';
+
+            // Ejecuta la consulta SQL para insertar la nueva zapatilla en la base de datos
+            connection.query(sql, [sneakerId, brand, model, type, price, size], (error, results, fields) => {
+                connection.end(); // Cierra la conexión después de insertar la zapatilla
+                if (error) {
+                    console.error('Error al crear una nueva zapatilla:', error);
+                    res.status(500).json({ error: 'Error al crear una nueva zapatilla' });
+                } else {
+                    res.status(201).json({ message: 'Zapatilla creada correctamente' }); // Retorna el mensaje de éxito
+                }
+            });
+        } catch (error) {
+            console.error('Error al crear una nueva zapatilla:', error);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });
+
+    router.post('/sneaker/buy/:id', async (req, res) => {
+        const sneakerId = req.params.id;
+        const { streetandnumber, flooranddoor, city, postalcode } = req.body;
+
+        if (!streetandnumber || !flooranddoor || !city || !postalcode) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios' });
+        }
+
+        const ticketId = uuidv4();
+        const addressId = uuidv4();
+        const connection = mysql.createConnection(dbConfig);
+
+        connection.beginTransaction((err) => {
+            if (err) {
+                console.error('Error al iniciar la transacción:', err);
+                return res.status(500).json({ error: 'Error interno del servidor' });
+            }
+
+            const sqlAddress = 'INSERT INTO address (id, streetandnumber, flooranddoor, city, postalcode) VALUES (?, ?, ?, ?, ?)';
+            const sqlTicket = 'INSERT INTO ticket (id, address_id, sneaker_id) VALUES (?, ?, ?)';
+
+            connection.query(sqlAddress, [addressId, streetandnumber, flooranddoor, city, postalcode], (error, results) => {
+                if (error) {
+                    console.error('Error al crear una nueva dirección:', error);
+                    return connection.rollback(() => {
+                        res.status(500).json({ error: 'Error al crear una nueva dirección' });
+                    });
+                }
+
+                connection.query(sqlTicket, [ticketId, addressId, sneakerId], (error, results) => {
+                    if (error) {
+                        console.error('Error al crear un nuevo ticket:', error);
+                        return connection.rollback(() => {
+                            res.status(500).json({ error: 'Error al crear un nuevo ticket' });
+                        });
+                    }
+
+                    connection.commit((err) => {
+                        if (err) {
+                            console.error('Error al confirmar la transacción:', err);
+                            return connection.rollback(() => {
+                                res.status(500).json({ error: 'Error interno del servidor' });
+                            });
+                        }
+                        res.status(201).json({ message: 'Se ha creado el ticket correctamente' });
+                    });
+                });
+            });
+        });
+    });
+
 
     // ENDPOINST DE TICKETS
+
 
     return router;
 }

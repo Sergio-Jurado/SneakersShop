@@ -1,22 +1,26 @@
-import React from 'react'
+import { useNavigate } from "react-router-dom";
+
 
 const Card = ({ sneaker }) => {
+    const navigate = useNavigate();
+
+    const handleBuyClick = () => {
+        navigate(`/comprarZapatilla/${sneaker.id}`);
+    };
+
     return (
-        <>
-            <h1>{sneaker.brand}</h1>
-            <div className="card w-96 bg-base-100 shadow-xl image-full">
-                <figure><img src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-                <div className="card-body">
-                    <h2 className="card-title">{sneaker.model}</h2>
-                    <p>{sneaker.type}</p>
-                    <p>{sneaker.price}</p>
-                    <div className="card-actions justify-end">
-                        <button className="btn btn-primary">Buy Now</button>
-                    </div>
+        <div className="card bg-green-200 shadow-xl rounded-lg overflow-hidden text-black">
+            <div className="card-body">
+                <h2 className="card-title">Marca: {sneaker.brand}</h2>
+                <p>Model: {sneaker.model}</p>
+                <p>Tipo: {sneaker.type}</p>
+                <p>Precio: {sneaker.price} euros</p>
+                <div className="card-actions justify-end">
+                    <button className="btn bg-green-600 text-white" onClick={handleBuyClick}>Comprar ahora</button>
                 </div>
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
 
-export default Card
+export default Card;
