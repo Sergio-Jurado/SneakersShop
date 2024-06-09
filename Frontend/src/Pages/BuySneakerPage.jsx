@@ -29,7 +29,6 @@ const BuySneakerPage = () => {
 
             const data = await response.json();
             if (response.ok) {
-                // alert('Compra realizada con éxito');
                 navigate("/");
 
             } else {

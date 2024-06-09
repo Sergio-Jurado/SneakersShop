@@ -4,7 +4,7 @@ const useLogout = () => {
     const navigate = useNavigate();
 
     const logout = () => {
-        localStorage.clear(); // Limpia todo el localStorage. Puedes usar removeItem('authToken') si solo deseas eliminar el token de autenticación.
+        localStorage.clear(); // Limpia todo el localStorage.
         navigate('/login'); // Redirige a la página de login
     };
 
