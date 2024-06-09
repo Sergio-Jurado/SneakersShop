@@ -20,6 +20,7 @@ const useUserInfo = () => {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
+                console.log(data);
                 setUserInfo(data);
             } catch (err) {
                 setError(err.message);

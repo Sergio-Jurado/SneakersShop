@@ -14,6 +14,8 @@ const getRouter = () => {
         database: 'SneakerShop'
     };
 
+    // - ENDPOINTS DE USUARIO
+
     router.get('/users', (req, res) => {
         const connection = mysql.createConnection(dbConfig);
         connection.query('SELECT * FROM usuarios', (error, results, fields) => {
@@ -27,6 +29,7 @@ const getRouter = () => {
         });
     });
 
+    // Crea un nuevo usuario
     router.post('/register', async (req, res) => {
         const { username, password, name, last_name } = req.body;
 
@@ -59,26 +62,34 @@ const getRouter = () => {
         }
     });
 
-    router.delete('/user/:id', (req, res) => {
-        const userId = req.params.id;
+    // Obtiene la información del usuario que está registrado
+    router.get('/user/:id', async (req, res) => {
+        const userId = req.params.id; // Obtiene el ID del usuario de la URL
+        console.log(userId);
+        try {
+            const connection = mysql.createConnection(dbConfig); // Crea una nueva conexión a la base de datos
+            connection.connect(); // Conecta a la base de datos
+            connection.query('SELECT * FROM user WHERE id = ?', [userId], (error, results, fields) => {
+                connection.end(); // Cierra la conexión después de obtener los resultados
 
-        const connection = mysql.createConnection(dbConfig);
-        const sql = 'DELETE FROM usuarios WHERE id = ?';
-        connection.query(sql, [userId], (error, results, fields) => {
-            connection.end(); // Cerrar la conexión después de eliminar el usuario
-            if (error) {
-                console.error('Error al eliminar el usuario:', error);
-                res.status(500).json({ error: 'Error al eliminar el usuario' });
-            } else {
-                if (results.affectedRows === 0) {
-                    res.status(404).json({ error: 'Usuario no encontrado' });
-                } else {
-                    res.status(200).json({ message: 'Usuario eliminado correctamente' });
+                if (error) { // Maneja errores de consulta
+                    console.error('Error al obtener la información del usuario:', error);
+                    return res.status(500).json({ error: 'Error interno del servidor' });
                 }
-            }
-        });
+
+                if (!results || results.length === 0) { // Verifica si no se encontraron resultados
+                    return res.status(404).json({ error: 'Usuario no encontrado' });
+                }
+
+                res.json(results[0]);
+            });
+        } catch (error) {
+            console.error('Error al establecer la conexión a la base de datos:', error);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
     });
 
+    // Hace el login del usuario
     router.post('/login', async (req, res) => {
         const { username, password } = req.body;
 
@@ -127,28 +138,13 @@ const getRouter = () => {
         }
     });
 
+    // ENDOPIST DE SNEAKERS
+
+
+    // ENDPOINST DE TICKETS
+
     return router;
 }
 
 const router = getRouter();
 module.exports = router;
-
-
-
-// router.get('/testbd', async (req, res) => {
-// //     pool.getConnection((err, connection) => {
-// //         if (err) throw err
-// //         connection.query('describe user', (err, rows) => {
-// //             connection.release() // return the connection to pool
-
-// //             if (!err) {
-// //                 res.send(rows)
-// //             } else {
-// //                 console.log(err)
-// //             }
-
-// //             // if(err) throw err
-// //             console.log('The data from beer table are: \n', rows)
-// //         })
-// //     })
-// // })
