@@ -1,7 +1,7 @@
 import Footer from "../components/Footer"
 
 
-const ShowShoePage = () => {
+const ShowSneakerPage = () => {
   return (
     <>
 
@@ -10,4 +10,4 @@ const ShowShoePage = () => {
   )
 }
 
-export default ShowShoePage
+export default ShowSneakerPage

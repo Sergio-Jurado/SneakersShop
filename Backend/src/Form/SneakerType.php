@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\FormTypeInterface;
 
 class SneakerType extends AbstractType
 {
@@ -19,7 +20,15 @@ class SneakerType extends AbstractType
             ->add('model')
             ->add('type')
             ->add('price')
-        ;
+            ->add('photos', CollectionType::class, [
+                'entry_type' => PhotoType::class,
+                'allow_add' => true,
+                'by_reference' => false,
+                'prototype' => true,
+                'allow_delete' => true,
+                'label' => false,
+                'entry_options' => ['label' => false]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
